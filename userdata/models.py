@@ -1,7 +1,7 @@
 from django.db import models
 class userdata(models.Model):
-    date_joied=models.DateField()
-    last_active=models.DateField()
+    date_joied=models.DateTimeField(auto_now_add=True, blank=True)
+    last_active=models.DateTimeField(auto_now_add=True, blank=True)
 class user(models.Model):
     email=models.EmailField()
     username=models.CharField(max_length=30)

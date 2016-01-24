@@ -1,4 +1,10 @@
 
+		#id_username{
+			position:absolute;
+			height:30px;
+			width:400px;
+
+		}
 		#id_spassword{
 			position:absolute;
 

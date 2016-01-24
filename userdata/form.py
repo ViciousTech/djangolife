@@ -6,6 +6,7 @@ class login(forms.Form):
 
 
 class signup(forms.Form):
+	username=forms.CharField(required=True,widget=forms.TextInput(attrs={'placeholder':'Username'}))
 	semail=forms.EmailField(required=True,widget=forms.TextInput(attrs={'placeholder':'Email'}))
 	first_name=forms.CharField(required=True,widget=forms.TextInput(attrs={'placeholder':'First name'}))
 	last_name=forms.CharField(required=True,widget=forms.TextInput(attrs={'placeholder':'Last Name'}))
