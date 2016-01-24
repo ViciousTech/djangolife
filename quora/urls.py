@@ -19,5 +19,6 @@ from userdata.views import *
 
 urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
-    url(r'^$',home)
+    url(r'^$',home),
+    url(r'^signup/$',lsignup),
 ]
