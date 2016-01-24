@@ -1,22 +1,22 @@
+import bcrypt
 from django.shortcuts import render
 from userdata.form import *
 from userdata.models import *
 from django.http import HttpResponseRedirect
-# Create your views here.
+from django.db.models import Max
+
+
 def home(request):
     lerror=[]
     if request.method=="POST":
         l=request.POST
-        if ( not l['email'] ) or (not l['password']):
+        if ( not l['email'].strip() ) or (not l['password'].strip()):
             lerror.append("Fields cannot be left empty")
-        if (not '@' in l['email']) or (not '.com' in l['email']):
-            lerror.append("Enter a valid email Id")
         if not lerror:
             t=user.objects.get(email=l['email'])
             if t:
-                if t.password==l["password"]:
+                if bcrypt.hashpw(str(l['password']),str(t.password)) == str(t.password):
                     return render(request,"alogin.html",{'sform':t})
-
                 else:
                     lerror.append("Password do not match")
             else:
@@ -28,7 +28,25 @@ def lsignup(request):
         data=signup(request.POST)
         if data.is_valid():
             cd=data.cleaned_data#The data is encoded to a single format that is unicode
-            user.objects.create(email=cd['semail'],username=cd['username'],first_name=cd['first_name'],last_name=cd['last_name'],password=cd['spassword'],dob=cd['dob'])
+            try:
+                email_check = user.objects.get(email = cd['semail'] )
+                user_check = user.objects.get(username = cd['username'])
+            except:
+                email_check = []
+                user_check = []
+            for i in user_check:
+                return render(request,'signup.html',{'sform':signup})
+            for i in email_check:
+                return render(request,'signup.html',{'sform':signup})
+            if(cd['spassword'] != cd['cf_password']):
+                return render(request,'signup.html',{'sform':signup})
+            salt = bcrypt.gensalt(14)
+            vericode = salt[7:]
+            hashed_pass = bcrypt.hashpw(str(cd['spassword']),salt)
+            id = user.objects.all().aggregate(Max('user_id'))
+            if id['user_id__max'] is None : userid = 0
+            else: userid = int(id['user_id__max']) + 1
+            user.objects.create(user_id = userid ,email=cd['semail'],username=cd['username'],first_name=cd['first_name'],last_name=cd['last_name'],password=hashed_pass,dob=cd['dob'])
             return HttpResponseRedirect("/")
     else:
         return render(request,"signup.html",{'sform':signup})
