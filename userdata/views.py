@@ -1,16 +1,27 @@
 from django.shortcuts import render
 from userdata.form import *
 from userdata.models import *
+from django.http import HttpResponseRedirect
 # Create your views here.
 def home(request):
+    lerror=[]
     if request.method=="POST":
-        cd=request.POST
-        t=user.objects.get(email=cd['email'])
-        if t:
-            if t.password==cd["password"]:
-                return render(request,"success.html",{'sform':t})
-    else:
-        return render(request,"home.html",{'form':login})
+        l=request.POST
+        if ( not l['email'] ) or (not l['password']):
+            lerror.append("Fields cannot be left empty")
+        if (not '@' in l['email']) or (not '.com' in l['email']):
+            lerror.append("Enter a valid email Id")
+        if not lerror:
+            t=user.objects.get(email=l['email'])
+            if t:
+                if t.password==l["password"]:
+                    return render(request,"alogin.html",{'sform':t})
+
+                else:
+                    lerror.append("Password do not match")
+            else:
+                lerror.append("No such email")
+    return render(request,"home.html",{'form':login,'lerror':lerror})
 
 def lsignup(request):
     if request.method=="POST":
