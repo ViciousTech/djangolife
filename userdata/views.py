@@ -28,8 +28,10 @@ def lsignup(request):
     if request.method=="POST":
         data=signup(request.POST)
         if data.is_valid():
-            cd=data.cleaned_data#The data is encoded to a single format that is unicode
-            try:#making sure accounts are not redundant
+            cd=data.cleaned_data                #The data is encoded to a single format that is unicode
+            if(" " in cd['username'].strip()):  #To check if username contains whitespaces
+                serror.append("Username cannot have spaces")
+            try:                                #making sure accounts are not redundant
                 email_check = user.objects.get(email = cd['semail'] )
                 user_check = user.objects.get(username = cd['username'])
             except:
@@ -37,16 +39,15 @@ def lsignup(request):
                 user_check = []
             for i in user_check:
                 serror.append("Username already in use")
-
             for i in email_check:
                 serror.append("Email already in use")
             if(cd['spassword'] != cd['cf_password']):
                 serror.append("Passwords do not match")
-            if not serror:
-                salt = bcrypt.gensalt(14)
-                vericode = salt[7:]
+            if not serror:                        #Proceeding with Account Creation after removing all the errors
+                salt = bcrypt.gensalt(14)         #>Log to the base 14 charecter literal chosen as salt  
+                vericode = salt[7:]               #Charecters from 7th digit is taken as the vericode
                 hashed_pass = bcrypt.hashpw(str(cd['spassword']),salt)
-                id = user.objects.all().aggregate(Max('user_id'))
+                id = user.objects.all().aggregate(Max('user_id'))   #finding new user id
                 if id['user_id__max'] is None : userid = 0
                 else: userid = int(id['user_id__max']) + 1
                 user.objects.create(user_id = userid ,email=cd['semail'],username=cd['username'],first_name=cd['first_name'],last_name=cd['last_name'],password=hashed_pass,dob=cd['dob'])
