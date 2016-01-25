@@ -22,6 +22,8 @@ urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
     url(r'^$',home),
     url(r'^signup/$',lsignup),
+    url(r'^login/$',loginc),
+    url(r'^logout/$',logoutc),
 ]
 
 
