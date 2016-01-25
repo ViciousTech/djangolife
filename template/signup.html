@@ -45,8 +45,12 @@
 		<br>
 		{%csrf_token%}
 		<input type="submit" value="Create Account" id="id_signup">
-
-	</form>
+		{%if serror%}
+		<ul>
+			<li>{{serror.0}}</li>
+		</ul>
+		{%endif%}
+ </form>
 
 
 </body>
