@@ -40,7 +40,6 @@ def lsignup(request):
                     serror.append("Username already in use")
                 for i in email_check.email:
                     serror.append("Email already in use")
-            
             except:
                 pass
             if(cd['spassword'] != cd['cf_password']):
@@ -53,7 +52,7 @@ def lsignup(request):
                 if id['user_id__max'] is None : userid = 0
                 else: userid = int(id['user_id__max']) + 1
                 user.objects.create(user_id = userid ,email=cd['semail'],username=cd['username'],first_name=cd['first_name'],last_name=cd['last_name'],password=hashed_pass,dob=cd['dob'])
-                return HttpResponseRedirect("/")
+                return render(request,'home.html',{'data':"You have sucessfully Signed Up Login to continue " })
             else:
                 return render(request,'signup.html',{'sform':signup,'serror':serror})
     else:
