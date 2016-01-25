@@ -31,16 +31,18 @@ def lsignup(request):
             cd=data.cleaned_data                #The data is encoded to a single format that is unicode
             if(" " in cd['username'].strip()):  #To check if username contains whitespaces
                 serror.append("Username cannot have spaces")
+            email_check = []
+            user_check = []
             try:                                #making sure accounts are not redundant
                 email_check = user.objects.get(email = cd['semail'] )
-                user_check = user.objects.get(username = cd['username'])
+                user_check = user.objects.get(username = cd['username'])        
+                for i in user_check.username:
+                    serror.append("Username already in use")
+                for i in email_check.email:
+                    serror.append("Email already in use")
+            
             except:
-                email_check = []
-                user_check = []
-            for i in user_check:
-                serror.append("Username already in use")
-            for i in email_check:
-                serror.append("Email already in use")
+                pass
             if(cd['spassword'] != cd['cf_password']):
                 serror.append("Passwords do not match")
             if not serror:                        #Proceeding with Account Creation after removing all the errors
