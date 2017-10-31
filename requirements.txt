@@ -1,1 +1,1 @@
-<Add Requirements here>
+django==1.18
